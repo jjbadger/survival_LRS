@@ -5,18 +5,17 @@ The data and code provided in this repository was used to analyze grey seal repr
 
 
 
+## Abstract 
+
+Individual quality and environmental conditions may mask or interact with energetic trade-offs in life history evolution. Deconstructing these sources of variation is especially difficult in long-lived species that are rarely observed on time scales long enough to disentangle these effects. Here, we investigated relative support for variation in female quality and costs of reproduction as factors shaping differences in life history trajectories using a 32-year data set of repeated reproductive measurements from 273 marked, known-aged female grey seals (Halichoerus grypus). We defined individual reproductive investment using two traits, reproductive frequency (a female’s probability of breeding) and provisioning performance (offspring weaning mass). Fitted hierarchical Bayesian models identified individual investment relative to conspecifics (over a female’s entire life and in three age-classes) and subsequently estimated how these investment metrics and the Atlantic Multidecadal Oscillation are associated with longevity. Individual differences (i.e. quality) contributed a large portion of the variance in reproductive traits.  Females that consistently invest well in their offspring relative to other females survive longer. The best supported model estimated survival as a function of age-class specific provisioning performance, where late-life performance was particularly variable and had the greatest impact on survival, possibly indicating individual variation in senescence. There was no evidence to support a trade-off in reproductive performance and survival at the individual level. Overall, these results suggest that in grey seals, individual quality is a stronger driver in life history variation than individual strategies resulting from energetic trade-offs.
+
+
 ## Layout
+The repository is split into three main directories. 
 
-The repository is split into seven main directories, many of which have subdirectories. This structure has been designed to be easily navigable by humans and computers alike, allowing for rapid location of specific files and instructions. Within each directory is a `README.md` file which summarizes the purpose of that directory as well as some examples where necessary. This structure may not be perfect for your intended us and may need to be modified. Each section is briefly described below. 
+### **`analysis`** 
 
-### **`experiments`** 
-Where all of the experimental information lives, including any *executed* code. lives. This includes pipelines, scripts, and figure files. 
- * **`processing`**: Any code used to *transform* the data into another type should live here. This can include everything from parsing of text data, image segmentation/filtering, or simulations.
- * **`analysis`**: Any code to to *draw conclusions* from an experiment or data set. This may include regression, dimensionality reduction, or calculation of various quantities.
- * **`exploratory`**: A sandbox where you keep a record of your different approaches to transformation, interpretation, cleaning, or generation of data.
- * **`figures`**: Any code used to generate figures for your finished work, presentations, or for any other use.
 
 ### **`data`** 
-All raw data collected from your experiments as well as copies of the transformed data from your processing code. 
 
 
