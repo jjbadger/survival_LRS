@@ -203,7 +203,7 @@ m <- jags.model(file=file.path(outdir,jags.file), data=jags.data, n.chains=n.cha
 update(m, n.burnin)
 # SAMPLE FROM POSTERIORS
 post <- coda.samples(m,variable.names=c("intercept",
-                                        "pi",
+                                        "pi",               
                                         "sigma.t.mass",
                                         "sigma.i.mass",
                                         "beta",
@@ -218,7 +218,7 @@ saveRDS(post, file.path(outdir,"post_survival_lifePP.RData"))
 
 
 
-k<-as.shinystan(post)
+k<-as.shinystan(post)          #output visualization, at launch will open a website to explore results
 launch_shinystan(k)
 
 #WAIC approximation function
@@ -239,4 +239,4 @@ waic1.jags <- function(post,n.obs,loglike.grep.txt = "lli"){
   waic1 <- -2*(lppd-p_waic1)
   return(waic1)
 }
-waic1.jags(post, nind)
+waic1.jags(post, nind)    # provides WAIC for model selection
