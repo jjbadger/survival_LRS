@@ -6,7 +6,7 @@ This is a list of 16 data objects needed to run the model describing variation i
 
 
  1) A list of data for JAGS survival model.
-         nind = number of individuals, 1x1.
+         nind = number of individuals, 1x1.\\
          nyears = time series length,  1x1.
          ageb = age, discretized into age groups 1-3, for each individual and time step, 273 x 32.
          afr = age at first reproduction for each individual, 273 x 1
