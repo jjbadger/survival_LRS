@@ -1,7 +1,7 @@
 # Late life reproductive investment drives life history variation in a long-lived mammal 
 
 ## Overview
-The data and code provided in this repository was used to analyze grey seal reproductive data to determine how reproductive performance affects survival. 
+The data and code provided in this repository was used to analyze grey seal reproductive data to determine how reproductive performance affects survival. Please email jjbadger@alaska.edu with any questions. 
 
 
 
@@ -11,11 +11,11 @@ Individual quality and environmental conditions may mask or interact with energe
 
 
 ## Layout
-The repository is split into three main directories. 
+The repository is split into two main directories, analysis and data.  
 
 ### **`analysis`** 
-
+Contains script to execute model and description of methods. 
 
 ### **`data`** 
-
+Contains data file and associated metadata. 
 
