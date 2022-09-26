@@ -17,27 +17,29 @@ date<-Sys.Date()
 outdir<-file.path(rootdir, "output", date)
 dir.create(outdir)
 
-load(file.path(datadir, "jags_data.RData"))        # A list of data for JAGS survival model. n.obs = number of total observations, 
-                                                   #                                         nind = number of individuals, 
-                                                   #                                         nyears = time series length,  
-                                                   #                                         ageb = age, discretized into age groups 1-3
-                                                   #                                         ap = age at first reproduction for each individual at each time step
-                                                   #                                         ch = capture history, each row corresponds to one individual, each column a time step
+load(file.path(datadir, "jags_dataPP.RData"))        # A list of data for JAGS survival model.
+#                                         nind = number of individuals, 
+#                                         nyears = time series length,  
+#                                         ageb = age, discretized into age groups 1-3, for each individual and time step
+#                                         ap = age at first reproduction for each individual 
+#                                         ch = capture histories for each individual over time series. Coded as 1 for sighted and 0 for not sighted
 
-                                                   # Variables with a "v" after them are in the form of vectors for the regression 
-                                                   # on pup weaning mass because we did not have data for every individual every year 
-                                                   # (due to skip breeding or failed to collect mass).So,                                      
-                                                   #                                         pwm_v = pup weaning masses, 
-                                                   #                                         age_v = standardized age  
-                                                   #                                         age_v2 = standardized age^2
-                                                   #                                         par_v = parity
-                                                   #                                         sex_v =  pup sex
-                                                   #                                         afr_v = age at first reproduction 
-                                                   #                                         amo_v = Atlantic Multidecadal Oscillation, averaged over preceeding 3 years
-                                                   #                                         ind_v = individual identifier 
-                                                   #                                         year_v = year
-                                                   #                                         age_v2 = standardized age^2
-                                                   #                                         age_v2 = standardized age^2
+# List of data for embedded regression model on pup weaning mass. 
+# Variables with a "v" after them are in the form of vectors for the regression 
+# on pup weaning mass because we did not have data for every individual every year 
+# (due to skip breeding or failed to collect mass).So,     
+#                                         n.obs = number of observations, 
+#                                         pwm_v = pup weaning masses, 
+#                                         age_v = standardized age  
+#                                         age_v2 = standardized age^2
+#                                         par_v = parity
+#                                         sex_v =  pup sex
+#                                         afr_v = age at first reproduction 
+#                                         amo_v = Atlantic Multidecadal Oscillation, averaged over preceeding 3 years
+#                                         ind_v = individual identifier 
+#                                         year_v = year
+#                                         age_v2 = standardized age^2
+#                                         age_v2 = standardized age^2
 
 
 
@@ -64,6 +66,9 @@ jags.data[["f"]] <- apply(jags.data[["ch"]], 1, get.first)        # adds to data
 jags.model.txt <- "model{
 
 ## Stage 1: Pup weaning mass mixed effects model 
+### Parameters: pi, regression coefficients
+#               alpha_mass, individual intercepts
+#               epsilon_mass, year effect 
 
 for(j in 1:n.obs){
       pwm_v[j] ~ dnorm(mu[j], tau)
@@ -101,14 +106,22 @@ sigma2.i.mass<-pow(sigma.i.mass,2)
 
 
 ## Stage 2: Survival analysis
+### Parameters: beta, regression coefficients
+#               alpha, individual intercepts for survival 
+#               epsilon, year effect on survival 
+#               p, detection probability 
+#               
+
+
+
 for(i in 1:nind){
 for(t in f[i]:(nyears-1)){
-  logit(phi[i,t]) <- beta[ageb[i,t]] + beta[4]*amo[t] + beta[5]*ap[i] + beta[6]*alpha_mass[i] + epsilon[t] + alpha[i]
+  logit(phi[i,t]) <- beta[ageb[i,t]] + beta[4]*amo[t] + beta[5]*afr[i] + beta[6]*alpha_mass[i] + epsilon[t] + alpha[i]
   p[i,t] <-mean.p
 }
 }
 
-mean.p~ dbeta(1,1)
+mean.p ~ dbeta(1,1)
 
 
 for(i in 1:nind){
@@ -167,7 +180,9 @@ cjs.init.z <- function(ch,f){                    # initialize the state matrix.
   return(ch)
 }
 
-inits<-function(){list(z=cjs.init.z(jags.data[["ch"]],jags.data[["f"]]), 
+z.init<-cjs.init.z(jags.data[["ch"]],jags.data[["f"]])
+
+inits<-function(){list(z=z.init, 
                        sigma.i=runif(1,0,5), 
                        sigma.t=runif(1,0,5), 
                        beta=runif(6,-5,5), 
@@ -196,8 +211,8 @@ post <- coda.samples(m,variable.names=c("intercept",
                                         "sigma.t",
                                         "mean.p",
                                         "lli"
-                                        ),
-                     n.iter=n.iter,thin=n.thin)
+),
+n.iter=n.iter,thin=n.thin)
 saveRDS(post, file.path(outdir,"post_survival_lifePP.RData"))
 
 
