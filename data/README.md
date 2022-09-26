@@ -1,7 +1,7 @@
-## `data`
+# `data`
 This directory houses all data used in the analysis portion of this repository. 
 
-# jags_dataPP.RData
+## jags_dataPP.RData
 This is a list of 16 data objects needed to run the model describing variation in survival due to individual variation in lifetime provisioning performance (PP). 
 
 
@@ -30,5 +30,5 @@ This is a list of 16 data objects needed to run the model describing variation i
 
 You can also find this description commented-out in the analysis script. 
 
-# pwm.txt 
+## pwm.txt 
 This is a large dataframe of 
