@@ -5,7 +5,7 @@ This directory houses all data used in the analysis portion of this repository.
 This is a list of 16 data objects needed to run the model describing variation in survival due to individual variation in lifetime provisioning performance (PP). 
 
 
- 1) A list of data for JAGS survival model.
+ A list of data for JAGS survival model.
 
          nind = number of individuals, 1x1.
          
@@ -18,7 +18,7 @@ This is a list of 16 data objects needed to run the model describing variation i
          ch = capture histories for each individual over time series. Coded as 1 for sighted and 0 for not sighted, 273 x 32. 
          
           
- 2) List of data for embedded regression model on pup weaning mass. 
+ And, a list of data for embedded regression model on pup weaning mass. 
  
         Variables with a "v" after them are in the form of vectors for the regression 
         on pup weaning mass because we did not have data for every individual every year 
