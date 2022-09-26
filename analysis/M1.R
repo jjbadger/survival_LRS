@@ -11,35 +11,33 @@ library(rjags)
 library(shinystan)
 library(tidyverse)
 
-rootdir<- "~/Desktop/survival analysis"
-datadir<- file.path(rootdir, "data")
+rootdir<- "~/Desktop/survival analysis"               # directory to project folder
+datadir<- file.path(rootdir, "data")                  # directory to data foler
 date<-Sys.Date()
-outdir<-file.path(rootdir, "output", date)
-dir.create(outdir)
+outdir<-file.path(rootdir, "output", date)            # directory to desired output folder
+dir.create(outdir)                                    # create output folder
 
 load(file.path(datadir, "jags_dataPP.RData"))        # A list of data for JAGS survival model.
-#                                         nind = number of individuals, 
-#                                         nyears = time series length,  
-#                                         ageb = age, discretized into age groups 1-3, for each individual and time step
-#                                         ap = age at first reproduction for each individual 
-#                                         ch = capture histories for each individual over time series. Coded as 1 for sighted and 0 for not sighted
+#                                                             nind = number of individuals, 
+#                                                             nyears = time series length,  
+#                                                             ageb = age, discretized into age groups 1-3, for each individual and time step
+#                                                             afr = age at first reproduction for each individual 
+#                                                             ch = capture histories for each individual over time series. Coded as 1 for sighted and 0 for not sighted
 
-# List of data for embedded regression model on pup weaning mass. 
-# Variables with a "v" after them are in the form of vectors for the regression 
-# on pup weaning mass because we did not have data for every individual every year 
-# (due to skip breeding or failed to collect mass).So,     
-#                                         n.obs = number of observations, 
-#                                         pwm_v = pup weaning masses, 
-#                                         age_v = standardized age  
-#                                         age_v2 = standardized age^2
-#                                         par_v = parity
-#                                         sex_v =  pup sex
-#                                         afr_v = age at first reproduction 
-#                                         amo_v = Atlantic Multidecadal Oscillation, averaged over preceeding 3 years
-#                                         ind_v = individual identifier 
-#                                         year_v = year
-#                                         age_v2 = standardized age^2
-#                                         age_v2 = standardized age^2
+#                                                      List of data for embedded regression model on pup weaning mass. 
+#                                                              Variables with a "v" after them are in the form of vectors for the regression 
+#                                                              on pup weaning mass because we did not have data for every individual every year 
+#                                                              (due to skip breeding or failed to collect mass).So,     
+#                                                                    n.obs = number of observations, 
+#                                                                    pwm_v = pup weaning masses, 
+#                                                                    age_v = standardized age  
+#                                                                    age_v2 = standardized age^2
+#                                                                    par_v = parity
+#                                                                    sex_v =  pup sex
+#                                                                    afr_v = age at first reproduction 
+#                                                                    amo_v = Atlantic Multidecadal Oscillation, averaged over preceeding 3 years
+#                                                                    ind_v = individual identifier 
+#                                                                    year_v = year
 
 
 
@@ -73,34 +71,34 @@ jags.model.txt <- "model{
 for(j in 1:n.obs){
       pwm_v[j] ~ dnorm(mu[j], tau)
       
-      mu[j] <- intercept + pi[1]*age_v[j] + pi[2]*age_v2[j] + pi[3]*par_v[j] + pi[4]*sex_v[j] + pi[5]*afr_v[j] 
-                + pi[6]*amo_v[j] + alpha_mass[ind_v[j]] + epsilon_mass[year_v[j]]
+      mu[j] <- intercept + pi[1]*age_v[j] + pi[2]*age_v2[j] + pi[3]*par_v[j] + pi[4]*sex_v[j]             #Regression on pup weaning mass
+                  + pi[5]*afr_v[j] + pi[6]*amo_v[j] + alpha_mass[ind_v[j]] + epsilon_mass[year_v[j]]
 }
 
 
-intercept ~ dnorm(50, 0.01)               # Mean of prior reflects prior knowledge on population (see Bowen et al. 2007, along with many others)
+intercept ~ dnorm(50, 0.01)               # Mean of prior for intercept reflects prior knowledge on population (see Bowen et al. 2007, along with many others)
 
 for(k in 1:6){
-  pi[k] ~ dnorm(0,0.001)
+  pi[k] ~ dnorm(0,0.001)                     # Coefficient priors
 }
 
-for(i in 1:nind){
+for(i in 1:nind){                           # alpha_mass are the PP estimates
 alpha_mass[i] ~ dnorm(0, tau.i.mass)
 }
 
-for(t in 1:nyears){
+for(t in 1:nyears){                         # Year effect
 epsilon_mass[t] ~ dnorm(0,tau.t.mass)
 }
 
 
-sigma ~ dunif(0,10)
+sigma ~ dunif(0,10)                       # SD of pup weaning mass
 tau <- pow(sigma, -2)
 
-sigma.t.mass ~ dunif(0,10)
+sigma.t.mass ~ dunif(0,10)                # SD of individuals 
 tau.t.mass<- pow(sigma.t.mass,-2)
 sigma2.t.mass<-pow(sigma.t.mass,2)
 
-sigma.i.mass ~ dunif(0,10)
+sigma.i.mass ~ dunif(0,10)                # SD of year effects
 tau.i.mass <- pow(sigma.i.mass, -2)
 sigma2.i.mass<-pow(sigma.i.mass,2)
 
@@ -115,48 +113,50 @@ sigma2.i.mass<-pow(sigma.i.mass,2)
 
 
 for(i in 1:nind){
-for(t in f[i]:(nyears-1)){
-  logit(phi[i,t]) <- beta[ageb[i,t]] + beta[4]*amo[t] + beta[5]*afr[i] + beta[6]*alpha_mass[i] + epsilon[t] + alpha[i]
-  p[i,t] <-mean.p
+for(t in f[i]:(nyears-1)){                   
+  logit(phi[i,t]) <- beta[ageb[i,t]] + beta[4]*amo[t] + beta[5]*afr[i] + beta[6]*alpha_mass[i] + epsilon[t] + alpha[i]       #Regression on survival
+  p[i,t] <-mean.p                    
 }
 }
 
-mean.p ~ dbeta(1,1)
+mean.p ~ dbeta(1,1)             # detection parameter
 
 
 for(i in 1:nind){
-alpha[i] ~ dnorm(0, tau.i)
+alpha[i] ~ dnorm(0, tau.i)             # Individual variation in survival 
 }
 
 for(t in 1:(nyears-1)){
-epsilon[t] ~ dnorm(0,tau.t)
+epsilon[t] ~ dnorm(0,tau.t)             # Yearly variation in survival 
 }
 
 for(i in 1:6){
-beta[i] ~ dnorm(0,0.001)T(-10,10)
+beta[i] ~ dnorm(0,0.001)T(-10,10)             # Coefficient priors 
 }
 
-sigma.t ~ dunif(0,10)
+sigma.t ~ dunif(0,10)              # SD of year effects on survival 
 tau.t<- pow(sigma.t,-2)
 sigma2.t<-pow(sigma.t,2)
 
-sigma.i ~ dunif(0,10)
+sigma.i ~ dunif(0,10)              # SD of individual effects on survival 
 tau.i <- pow(sigma.i, -2)
 sigma2.i<-pow(sigma.i,2)
 
+
+## Likelihood 
 for(i in 1:nind){
-z[i,f[i]]<-1
+z[i,f[i]]<-1                #At first capture f, everyone is alive (z = 1)
 
-for(t in (f[i]+1):nyears){
-z[i,t] ~ dbern(mu1[i,t])
-mu1[i,t] <- phi[i,t-1]*z[i,t-1]
+for(t in (f[i]+1):nyears){            #Loop through rest of years 
+z[i,t] ~ dbern(mu1[i,t])                    # State process: 
+mu1[i,t] <- phi[i,t-1]*z[i,t-1]             # Based on survival phi (and state z-1, dead seals cant come back to life)
 
-ch[i,t] ~ dbern(mu2[i,t])
-mu2[i,t] <- p[i,t-1]*z[i,t]
+ch[i,t] ~ dbern(mu2[i,t])            # Observation process: 
+mu2[i,t] <- p[i,t-1]*z[i,t]                # Based on detection probability p (and state z, we can't see dead seals)
 
-log_lik[i,t]<-logdensity.bern(ch[i,t],mu2[i,t])
+log_lik[i,t]<-logdensity.bern(ch[i,t],mu2[i,t])      # Pull log probability of obsevations (for model selection)
 }
-lli[i]<- sum(log_lik[i,((f[i]+1):nyears)])
+lli[i]<- sum(log_lik[i,((f[i]+1):nyears)])               # Sum over years ofr each individual 
 
 }
 }" 
@@ -168,7 +168,7 @@ cat(jags.model.txt,fill=TRUE) # send model syntax to the file
 sink() # close connection
 
 
-cjs.init.z <- function(ch,f){                    # initialize the state matrix.
+cjs.init.z <- function(ch,f){                    # initialize the state matrix
   for (i in 1:dim(ch)[1]){
     if (sum(ch[i,])==1) next
     n2 <- max(which(ch[i,]==1)) 
@@ -182,15 +182,15 @@ cjs.init.z <- function(ch,f){                    # initialize the state matrix.
 
 z.init<-cjs.init.z(jags.data[["ch"]],jags.data[["f"]])
 
-inits<-function(){list(z=z.init, 
+inits<-function(){list(z=z.init,              # Initial values for MCMC
                        sigma.i=runif(1,0,5), 
                        sigma.t=runif(1,0,5), 
                        beta=runif(6,-5,5), 
                        mean.p=runif(1,0,1))}
 
-n.chains<-2
+n.chains<-3
 n.adapt<-1000
-n.burnin<-5000
+n.burnin<-9000
 n.iter<-20000
 n.thin<-10
 
