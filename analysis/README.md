@@ -7,12 +7,12 @@ This script fits a Cormack Jolly Seber open population model to grey seal captur
 
 
 
-#Methods 
+# Methods 
 
 
 
 
-##Defining lifetime and age class-specific provisioning performance 
+## Defining lifetime and age class-specific provisioning performance 
 
 Provisioning performance, *PP*, was estimated as the individual's effect (intercept) on weaning mass during the course of our study, relative to other females, after accounting for confounding effects of age at first reproduction, age, parity, AMO, and offspring sex. We modeled the weaning mass of pup $j$ born to of female $i$ in year $t$ ($mass_{j,t}$) as a linear mixed-effects model with random individual and year intercepts: 
 
@@ -22,7 +22,7 @@ Where parameters ${\pi}$ = $\{\pi_1, \pi_2, \pi_3, \pi_4, \pi_5, \pi_6\}$ reflec
 
 
 
-##Defining lifetime and age-class specific reproductive frequency *RF*
+## Defining lifetime and age-class specific reproductive frequency *RF*
 
 We estimated a female's reproductive frequency, *RF*, by modeling her reproductive history as a Markov chain in a multi-state open robust design capture recapture modeling framework (MSORD) to account for imperfect detection in reproductive rate. Between her first and last sightings on the island during our study, a female transitions among three reproductive states: initially a first time breeder $F$, then switching between a breeder state $B$, or non-breeder state $NB$. Reproductive frequency is then defined as the probability of transition $\psi^{kB}$ into a breeding state $B$ from any reproductive state $k$. An individual's state transition from year $t$ to $t+1$ is modeled as a categorical trial with probabilities of transition  $\psi^{ks}$ from any state $k$ to any state $s$, $k,s \in \{F, B, NB\}$. We used mixed-effects logistic regression embedded in the MSORD to account for standardized female age, parity, previous breeding state, age at first reproduction, AMO, and random individual and year effects in probability of breeding ($\psi^{kB}$) to estimate individual intercepts:
 
