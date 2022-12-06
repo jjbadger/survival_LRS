@@ -1,3 +1,8 @@
+
+The data and code provided in this repository was used to analyze grey seal reproductive data to determine how reproductive performance affects survival. Please email jjbadger@alaska.edu with any questions.
+
+
+
 # `data`
 This directory houses all data used in the analysis portion of this repository. 
 
@@ -61,5 +66,7 @@ Environmental Data
 The Atlantic Multidecadal Oscillation (AMO) index describes multidecadal atmosphere and sea variability in the Atlantic, with the warm phase associated with positive SST anomalies over most of the North Atlantic. Here, we use the AMO to account for large-scale environmental variability that can influence  both survival and individual reproductive investment and success. We used the annual mean of AMO unsmoothed from the Kaplan SST V2 index calculated at NOAA/ESRL/PSD1 (http://www.esrl.noaa.gov/psd/data/timeseries/AMO/ downloaded from NOAA on 12 August 2019). The time series was detrended with 10- year low-pass filtered annual mean area-averaged SST anomalies over the North Atlantic basin. For this analysis, we used the mean annual index in the preceding 3 years to investigate environmental effects on survival rates (as in den Heyer et al. 2021). 
 
 
+# `Analysis` 
+ In this hierarchical Bayesian model fit in JAGS, we define lifetime and age class-specific provisioning performance PP and reproductive frequency RF, defined as the individual intercepts in regressions describing pup weaning mass and probability of breeding. These variables were determined for both lifetime performance and age-class specific performance, with age classes 0-14, 15-24, and 25+. They are then used as covariates in a Cormack-Jolly-Seber open population model to determine their effect on survival.
 
 
